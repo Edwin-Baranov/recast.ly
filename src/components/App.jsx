@@ -1,6 +1,7 @@
 import VideoList from './VideoList.js';
 import VideoPlayer from './VideoPlayer.js';
 import exampleVideoData from '../data/exampleVideoData.js';
+import Search from './Search.js';
 import searchYouTube from '../lib/searchYouTube.js';
 
 class App extends React.Component {
@@ -31,13 +32,24 @@ class App extends React.Component {
     });
   }
 
-  render() {
+  changeVideoList(value) {
+    searchYouTube(value, (data) => {
+      this.setState({
+        videos: data
+      });
+    });
+  }
 
+  componentDidMount() {
+    this.changeVideoList('');
+  }
+
+  render() {
     return (
       <div>
         <nav className="navbar">
           <div className="col-md-6 offset-md-3">
-            <div><h5><em>search</em> view goes here</h5></div>
+            <Search changeCallback={_.debounce(this.changeVideoList.bind(this), 500)} />
           </div>
         </nav>
         <div className="row">
@@ -50,18 +62,6 @@ class App extends React.Component {
         </div>
       </div>
     );
-  }
-
-  componentDidMount() {
-    let videos = [];
-    //TODO: this is async so videos is an empty array when this.setState is called
-    searchYouTube('test', (data) => {
-      console.log(data);
-      videos = data;
-    });
-    this.setState({
-      videos: videos
-    });
   }
 }
 
